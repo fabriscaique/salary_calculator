@@ -1,753 +1,922 @@
 <!DOCTYPE html>
-<!-- Upload this file as index.html at the root of the GitHub Pages publishing branch. -->
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Expat Financial Snapshot - Caique Fabris</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
-    body {
-      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-      min-height: 100vh;
-      color: #ffffff;
-      padding: 18px;
-    }
-    .container { max-width: 1180px; margin: 0 auto; }
-    header { text-align: center; color: white; margin-bottom: 28px; padding-top: 10px; }
-    .expat-tagline { font-size: 14px; color: #d4af37; font-weight: 650; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .expat-tagline::before { content: '🌍'; }
-    header h1 { font-size: clamp(30px, 7vw, 44px); line-height: 1.05; margin-bottom: 10px; font-weight: 800; }
-    header p { color: #b8b8b8; font-size: clamp(14px, 3.6vw, 16px); }
-    .main-content { display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); gap: 24px; align-items: start; }
-    .card {
-      background: rgba(25, 25, 25, 0.86);
-      border: 1px solid rgba(212, 175, 55, 0.22);
-      border-radius: 14px;
-      padding: 26px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.28);
-      backdrop-filter: blur(4px);
-    }
-    .card h2, .card h3 { color: #d4af37; margin-bottom: 16px; }
-    .helper-text { color: #aaa; font-size: 13px; line-height: 1.5; margin-bottom: 18px; }
-    .form-group { margin-bottom: 16px; }
-    label { display: block; margin-bottom: 8px; color: #d4af37; font-weight: 700; font-size: 14px; }
-    input, select {
-      width: 100%;
-      min-height: 48px;
-      padding: 12px;
-      border: 2px solid rgba(212, 175, 55, 0.32);
-      background: rgba(15, 15, 15, 0.88);
-      border-radius: 8px;
-      font-size: 16px;
-      color: #fff;
-      appearance: none;
-      -webkit-appearance: none;
-    }
-    select {
-      background-image: linear-gradient(45deg, transparent 50%, #d4af37 50%), linear-gradient(135deg, #d4af37 50%, transparent 50%);
-      background-position: calc(100% - 18px) 20px, calc(100% - 13px) 20px;
-      background-size: 5px 5px, 5px 5px;
-      background-repeat: no-repeat;
-      padding-right: 36px;
-    }
-    input::placeholder { color: #666; }
-    input:focus, select:focus { outline: none; border-color: #d4af37; background-color: rgba(15, 15, 15, 0.98); }
-    input.error, select.error { border-color: #e74c3c !important; background: rgba(231,76,60,0.08) !important; }
-    .field-error { font-size: 12px; color: #ff7668; margin-top: 6px; min-height: 15px; font-weight: 650; }
-    .global-error { display: none; background: rgba(231,76,60,0.12); border: 1px solid rgba(231,76,60,0.65); color: #ff958b; padding: 12px; border-radius: 8px; margin: 12px 0 16px; font-weight: 700; font-size: 13px; line-height: 1.35; }
-    .global-error.active { display: block; }
-    button {
-      min-height: 52px;
-      padding: 14px 20px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .btn-primary, .cta-button { width: 100%; background: #d4af37; color: #0a0a0a; transition: transform 0.15s ease, filter 0.15s ease; }
-    .btn-primary:active, .cta-button:active { transform: translateY(1px); filter: brightness(1.08); }
-    .small-print { font-size: 12px; color: #777; text-align: center; margin-top: 12px; line-height: 1.45; }
-    .status-line { margin-top: 10px; font-size: 12px; text-align: center; color: #999; }
-    .status-ready { color: #d4af37; }
-    .results-section { display: none; }
-    .results-section.active { display: block; animation: fadeIn 0.25s ease-in; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-    .salary-display { background: linear-gradient(135deg, #d4af37 0%, #c89a5a 100%); color: #0a0a0a; padding: 22px; border-radius: 12px; margin-bottom: 18px; text-align: center; }
-    .salary-value { font-size: clamp(34px, 9vw, 46px); font-weight: 850; margin: 8px 0; }
-    .breakdown-items { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
-    .breakdown-item { padding: 16px; background: rgba(212,175,55,0.1); border-radius: 10px; text-align: center; }
-    .breakdown-value { font-size: clamp(22px, 6vw, 28px); font-weight: 850; color: #d4af37; margin-top: 4px; }
-    .priority-section { background: linear-gradient(135deg, #d4af37 0%, #c89a5a 100%); color: #0a0a0a; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 18px; }
-    .priority-value { font-size: clamp(34px, 9vw, 48px); font-weight: 900; margin: 8px 0; }
-    .result-note, .precision-note, .warning-box, .section-divider {
-      background: rgba(212,175,55,0.09);
-      border-left: 4px solid #d4af37;
-      padding: 14px;
-      border-radius: 7px;
-      margin: 16px 0;
-      font-size: 13px;
-      color: #bdbdbd;
-      line-height: 1.55;
-    }
-    .warning-box strong, .precision-note strong, .section-divider h4 { color: #d4af37; }
-    .bars { display: grid; gap: 14px; margin-top: 8px; }
-    .bar-row { display: grid; gap: 7px; }
-    .bar-label { display: flex; justify-content: space-between; gap: 12px; color: #cfcfcf; font-size: 13px; font-weight: 700; }
-    .bar-label span:last-child { color: #d4af37; text-align: right; }
-    .bar-track { height: 12px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; }
-    .bar-fill { height: 100%; background: linear-gradient(90deg, #d4af37, #c89a5a); border-radius: 999px; }
-    .optimization-drivers { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
-    .driver-card { background: rgba(212,175,55,0.1); padding: 15px; border-radius: 10px; border-left: 4px solid #d4af37; }
-    .driver-card h5 { color: #d4af37; font-size: 14px; margin-bottom: 7px; font-weight: 800; }
-    .driver-card p { color: #b0b0b0; font-size: 13px; line-height: 1.5; }
-    .deduction-table { margin-top: 22px; }
-    .table-header, .table-row { display: grid; grid-template-columns: 2fr 1fr 1.2fr 1.2fr; gap: 12px; padding: 14px; align-items: center; }
-    .table-header { background: linear-gradient(135deg, #d4af37 0%, #c89a5a 100%); color: #0a0a0a; border-radius: 9px 9px 0 0; font-weight: 850; font-size: 13px; }
-    .table-row { border-bottom: 1px solid rgba(212,175,55,0.18); font-size: 13px; }
-    .deduction-name { font-weight: 750; color: #fff; }
-    .deduction-value { font-weight: 800; color: #d4af37; }
-    .lead-capture-card { margin-top: 24px; }
-    .consent-row { display: flex; gap: 10px; align-items: flex-start; margin-top: 8px; color: #aaa; font-size: 12px; line-height: 1.45; }
-    .consent-row input { width: 18px; min-height: 18px; height: 18px; margin-top: 1px; accent-color: #d4af37; appearance: auto; -webkit-appearance: checkbox; }
-    .success-message { display: none; background: rgba(212,175,55,0.18); color: #d4af37; padding: 14px; border-radius: 8px; margin-bottom: 14px; text-align: center; font-weight: 800; border: 1px solid rgba(212,175,55,0.38); }
-    .success-message.active { display: block; }
-    noscript { display: block; background: rgba(231,76,60,0.14); border: 1px solid rgba(231,76,60,0.7); color: #ff9b91; padding: 14px; border-radius: 8px; margin: 18px auto; max-width: 760px; text-align: center; font-weight: 750; }
-
-    @media (max-width: 860px) {
-      body { padding: 14px; }
-      .main-content { grid-template-columns: 1fr; gap: 18px; }
-      .card { padding: 20px; }
-      header { margin-bottom: 20px; }
-    }
-    @media (max-width: 640px) {
-      .breakdown-items, .optimization-drivers { grid-template-columns: 1fr; }
-      .table-header { display: none; }
-      .table-row { grid-template-columns: 1fr; gap: 8px; padding: 14px 0; }
-      .table-row > div:not(.deduction-name)::before { content: attr(data-label); display: block; color: #8d8d8d; font-size: 11px; font-weight: 750; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.03em; }
-      .bar-label { flex-direction: column; gap: 3px; }
-      .bar-label span:last-child { text-align: left; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Expat Financial Snapshot - Caique Fabris</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+        }
+        .container { max-width: 1180px; margin: 0 auto; }
+        header { text-align: center; color: white; margin-bottom: 32px; padding-top: 20px; }
+        header h1 { font-size: clamp(30px, 5vw, 42px); margin-bottom: 10px; font-weight: 750; line-height: 1.1; }
+        header p { color: #b0b0b0; font-size: clamp(14px, 2vw, 16px); line-height: 1.5; }
+        .expat-tagline {
+            font-size: 15px;
+            color: #d4af37;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .expat-tagline::before { content: '🌍'; }
+        .main-content { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 26px; margin-bottom: 28px; align-items: start; }
+        .card {
+            background: rgba(25, 25, 25, 0.84);
+            border: 1px solid rgba(212, 175, 55, 0.22);
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.32);
+            overflow: hidden;
+        }
+        .card h2, .card h3 { color: #d4af37; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #d4af37; font-weight: 650; font-size: 14px; }
+        .form-group input, .form-group select {
+            width: 100%;
+            min-height: 46px;
+            padding: 12px 13px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            background: rgba(15, 15, 15, 0.86);
+            border-radius: 7px;
+            font-size: 16px;
+            color: #ffffff;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .form-group select {
+            background-image: linear-gradient(45deg, transparent 50%, #d4af37 50%), linear-gradient(135deg, #d4af37 50%, transparent 50%);
+            background-position: calc(100% - 18px) 20px, calc(100% - 12px) 20px;
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+            padding-right: 36px;
+        }
+        .form-group input::placeholder { color: #5f5f5f; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #d4af37; background-color: rgba(15, 15, 15, 0.98); }
+        .form-group input.error, .form-group select.error { border-color: #e74c3c !important; background: rgba(231, 76, 60, 0.08) !important; }
+        .field-error { font-size: 12px; color: #e74c3c; margin-top: 6px; min-height: 15px; font-weight: 600; }
+        .helper-text { color: #858585; font-size: 12px; line-height: 1.45; margin-top: -5px; margin-bottom: 16px; }
+        button {
+            padding: 15px 22px;
+            border: none;
+            border-radius: 7px;
+            font-size: 16px;
+            font-weight: 750;
+            cursor: pointer;
+            min-height: 50px;
+        }
+        .btn-primary { background: #d4af37; color: #0a0a0a; width: 100%; transition: all 0.24s; }
+        .btn-primary:hover { background: #e8c547; transform: translateY(-2px); }
+        .btn-primary:active { transform: translateY(0); }
+        .results-section { display: none; }
+        .results-section.active { display: block; animation: fadeIn 0.28s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        .salary-display {
+            background: linear-gradient(135deg, #d4af37 0%, #c89a5a 100%);
+            color: #0a0a0a;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            text-align: center;
+        }
+        .salary-value { font-size: clamp(34px, 6vw, 42px); font-weight: 800; margin: 8px 0; line-height: 1; }
+        .chart-container { position: relative; height: 320px; margin-bottom: 16px; }
+        .chart-fallback { display: none; color: #b0b0b0; font-size: 14px; line-height: 1.6; padding: 14px; background: rgba(212, 175, 55, 0.08); border-radius: 8px; }
+        .legend-items { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 18px; margin-top: 14px; }
+        .legend-item { display: flex; align-items: center; gap: 10px; min-width: 0; }
+        .legend-color { flex: 0 0 18px; width: 18px; height: 18px; border-radius: 4px; }
+        .legend-item span { overflow-wrap: anywhere; }
+        .breakdown-items { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
+        .breakdown-item { padding: 16px; background: rgba(212, 175, 55, 0.1); border-radius: 9px; text-align: center; }
+        .breakdown-value { font-size: clamp(21px, 4vw, 26px); font-weight: 800; color: #d4af37; margin: 3px 0; }
+        .result-note {
+            margin-top: 14px;
+            padding: 13px;
+            border-left: 4px solid #d4af37;
+            border-radius: 5px;
+            background: rgba(212, 175, 55, 0.08);
+            color: #b8b8b8;
+            font-size: 13px;
+            line-height: 1.55;
+        }
+        .savings-section {
+            background: linear-gradient(135deg, #d4af37 0%, #c89a5a 100%);
+            color: #0a0a0a;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .savings-value { font-size: clamp(30px, 6vw, 46px); font-weight: 850; margin: 8px 0; line-height: 1.05; }
+        .savings-range { font-size: 14px; opacity: 0.95; margin-top: 8px; font-weight: 700; }
+        .savings-subtext { font-size: 13px; opacity: 0.86; margin-top: 12px; line-height: 1.5; }
+        .precision-note, .warning-box, .section-divider {
+            background: rgba(212, 175, 55, 0.09);
+            border-left: 4px solid #d4af37;
+            padding: 14px;
+            border-radius: 6px;
+            margin: 18px 0;
+            color: #b0b0b0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .warning-box p { color: #e0e0e0; font-size: 14px; line-height: 1.6; }
+        .warning-box strong, .precision-note strong, .section-divider h4 { color: #d4af37; }
+        .warning-box ul { margin-left: 20px; margin-top: 10px; color: #b0b0b0; }
+        .section-divider h4 { font-size: 16px; margin-bottom: 4px; }
+        .optimization-drivers { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
+        .driver-card { background: rgba(212, 175, 55, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #d4af37; }
+        .driver-card h5 { color: #d4af37; font-size: 14px; margin-bottom: 8px; font-weight: 800; }
+        .driver-card p { color: #b0b0b0; font-size: 13px; line-height: 1.5; }
+        .deduction-table { width: 100%; margin-top: 28px; }
+        .deduction-table h3 { color: #d4af37; margin-bottom: 8px; font-size: 20px; }
+        .table-header, .table-row { display: grid; grid-template-columns: 2fr 1fr 1.35fr 1.35fr; gap: 14px; align-items: center; }
+        .table-header { padding: 14px; background: linear-gradient(135deg, #d4af37 0%, #c89a5a 100%); color: #0a0a0a; border-radius: 8px 8px 0 0; font-weight: 750; font-size: 13px; }
+        .table-row { padding: 14px; border-bottom: 1px solid rgba(212, 175, 55, 0.22); }
+        .table-row:hover { background: rgba(212, 175, 55, 0.08); }
+        .deduction-name { font-weight: 700; color: #ffffff; }
+        .deduction-value { font-weight: 750; color: #d4af37; }
+        .lead-capture-card {
+            background: rgba(25, 25, 25, 0.84);
+            border: 1px solid rgba(212, 175, 55, 0.22);
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.32);
+            margin-top: 28px;
+        }
+        .lead-capture-card h3 { color: #d4af37; margin-bottom: 10px; font-size: 20px; }
+        .lead-capture-card p { color: #b0b0b0; margin-bottom: 15px; font-size: 14px; line-height: 1.6; }
+        .lead-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+        .consent-row { display: flex; align-items: flex-start; gap: 10px; margin-top: 8px; color: #9a9a9a; font-size: 12px; line-height: 1.45; }
+        .consent-row input { width: 18px; height: 18px; flex: 0 0 18px; accent-color: #d4af37; margin-top: 1px; }
+        .cta-button { width: 100%; padding: 17px; background: #d4af37; color: #0a0a0a; border: none; border-radius: 7px; margin-top: 16px; font-weight: 800; font-size: 16px; cursor: pointer; transition: all 0.24s; }
+        .cta-button:hover { background: #e8c547; transform: translateY(-2px); }
+        .success-message { display: none; background: rgba(212, 175, 55, 0.16); color: #d4af37; padding: 14px; border-radius: 7px; margin-bottom: 15px; text-align: center; font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.4); }
+        .success-message.active { display: block; animation: fadeIn 0.25s ease-out; }
+        .small-print { font-size: 12px; color: #666; text-align: center; margin-top: 14px; line-height: 1.5; }
+        @media (max-width: 880px) {
+            body { padding: 14px; }
+            .main-content { grid-template-columns: 1fr; gap: 20px; }
+            .chart-container { height: 285px; }
+        }
+        @media (max-width: 680px) {
+            header { margin-bottom: 22px; padding-top: 8px; }
+            .card, .lead-capture-card { padding: 18px; border-radius: 12px; }
+            .breakdown-items, .optimization-drivers, .legend-items, .lead-grid { grid-template-columns: 1fr; }
+            .table-header { display: none; }
+            .table-row {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 8px;
+                padding: 14px 0;
+                border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+            }
+            .table-row > div:not(.deduction-name)::before {
+                content: attr(data-label);
+                display: block;
+                color: #8d8d8d;
+                font-size: 11px;
+                font-weight: 650;
+                margin-bottom: 2px;
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+            }
+            .chart-container { height: 260px; }
+            .salary-display, .savings-section { padding: 20px; }
+        }
+    </style>
 </head>
 <body>
-  <noscript>This calculator needs JavaScript. Open the hosted link in Safari, Chrome, or the Instagram browser.</noscript>
-  <div class="container">
-    <header>
-      <div class="expat-tagline">Built for expats in Germany with cross-border finances</div>
-      <h1>💰 Your 2026 Expat Financial Snapshot</h1>
-      <p>Estimate your 2026 German salary structure before a consultation.</p>
-    </header>
+    <div class="container">
+        <header>
+            <div class="expat-tagline">Built for expats in Germany with cross-border finances</div>
+            <h1>💰 Your 2026 Expat Financial Snapshot</h1>
+            <p>Estimate your German salary deductions and see which financial variables deserve a closer review.</p>
+        </header>
 
-    <div class="main-content">
-      <section class="card" aria-label="Salary calculator input">
-        <h2>Your Financial Profile</h2>
-        <p class="helper-text">Fast version: no name or phone needed to calculate. Contact details are requested only after the result.</p>
+        <div class="main-content">
+            <div class="card">
+                <h2 style="margin-bottom: 22px;">Your Financial Profile</h2>
+                <p class="helper-text">Fast version: no name or phone needed to calculate. Contact details are only requested after the result.</p>
 
-        <div class="form-group">
-          <label for="grossSalary">Annual Gross Salary (€)</label>
-          <input type="text" id="grossSalary" inputmode="numeric" autocomplete="off" placeholder="e.g., 65000" />
-          <div class="field-error" id="error-grossSalary"></div>
-        </div>
+                <div class="form-group">
+                    <label for="grossSalary">Annual Gross Salary (€)</label>
+                    <input type="number" id="grossSalary" placeholder="e.g., 65000" min="1" step="1000" inputmode="numeric" required>
+                    <div class="field-error" id="error-grossSalary"></div>
+                </div>
 
-        <div class="form-group">
-          <label for="taxClass">Tax Class (Steuerklasse)</label>
-          <select id="taxClass">
-            <option value="">-- Select --</option>
-            <option value="I">I - Single</option>
-            <option value="II">II - Single with children</option>
-            <option value="III">III - Married / higher earner</option>
-            <option value="IV">IV - Married / similar earners</option>
-            <option value="V">V - Married / lower earner</option>
-            <option value="VI">VI - Multiple jobs</option>
-          </select>
-          <div class="field-error" id="error-taxClass"></div>
-        </div>
+                <div class="form-group">
+                    <label for="taxClass">Tax Class (Steuerklasse)</label>
+                    <select id="taxClass" required>
+                        <option value="">-- Select --</option>
+                        <option value="I">I - Single</option>
+                        <option value="II">II - Single with children</option>
+                        <option value="III">III - Married / one main earner</option>
+                        <option value="IV">IV - Married / similar earners</option>
+                        <option value="V">V - Married / lower earner</option>
+                        <option value="VI">VI - Additional employment</option>
+                    </select>
+                    <div class="field-error" id="error-taxClass"></div>
+                </div>
 
-        <div class="form-group">
-          <label for="homeCountry">Home Country</label>
-          <select id="homeCountry">
-            <option value="">-- Select --</option>
-            <option value="brazil">🇧🇷 Brazil</option>
-            <option value="usa">🇺🇸 United States</option>
-            <option value="uk">🇬🇧 United Kingdom</option>
-            <option value="india">🇮🇳 India</option>
-            <option value="other">Other</option>
-          </select>
-          <div class="field-error" id="error-homeCountry"></div>
-        </div>
+                <div class="form-group">
+                    <label for="homeCountry">Your Home Country</label>
+                    <select id="homeCountry" required>
+                        <option value="">-- Select --</option>
+                        <option value="brazil">🇧🇷 Brazil</option>
+                        <option value="usa">🇺🇸 United States</option>
+                        <option value="uk">🇬🇧 United Kingdom</option>
+                        <option value="india">🇮🇳 India</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div class="field-error" id="error-homeCountry"></div>
+                </div>
 
-        <div class="form-group">
-          <label for="children">Children?</label>
-          <select id="children">
-            <option value="">-- Select --</option>
-            <option value="0">No</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3+</option>
-          </select>
-          <div class="field-error" id="error-children"></div>
-        </div>
+                <div class="form-group">
+                    <label for="children">Children?</label>
+                    <select id="children" required>
+                        <option value="">-- Select --</option>
+                        <option value="0">No</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3+</option>
+                    </select>
+                    <div class="field-error" id="error-children"></div>
+                </div>
 
-        <div class="form-group">
-          <label for="healthInsurance">Health Insurance</label>
-          <select id="healthInsurance">
-            <option value="">-- Select --</option>
-            <option value="gesetzlich">Gesetzlich (Public)</option>
-            <option value="privat">Privat (Private)</option>
-          </select>
-          <div class="field-error" id="error-healthInsurance"></div>
-        </div>
+                <div class="form-group">
+                    <label for="healthInsurance">Health Insurance</label>
+                    <select id="healthInsurance" required>
+                        <option value="">-- Select --</option>
+                        <option value="gesetzlich">Gesetzlich (Public)</option>
+                        <option value="privat">Privat (Private)</option>
+                    </select>
+                    <div class="field-error" id="error-healthInsurance"></div>
+                </div>
 
-        <div class="form-group">
-          <label for="churchTax">Church Member?</label>
-          <select id="churchTax">
-            <option value="">-- Select --</option>
-            <option value="no">No</option>
-            <option value="yes">Yes (9% estimate)</option>
-          </select>
-          <div class="field-error" id="error-churchTax"></div>
-        </div>
+                <div class="form-group">
+                    <label for="churchTax">Church Member?</label>
+                    <select id="churchTax" required>
+                        <option value="">-- Select --</option>
+                        <option value="no">No</option>
+                        <option value="yes">Yes (9% estimate)</option>
+                    </select>
+                    <div class="field-error" id="error-churchTax"></div>
+                </div>
 
-        <div class="form-group">
-          <label for="foreignIncome">Any foreign income?</label>
-          <select id="foreignIncome">
-            <option value="">-- Select --</option>
-            <option value="no">No</option>
-            <option value="yes">Yes (rental, business, investments)</option>
-          </select>
-          <div class="field-error" id="error-foreignIncome"></div>
-        </div>
+                <div class="form-group">
+                    <label for="foreignIncome">Any foreign income?</label>
+                    <select id="foreignIncome" required>
+                        <option value="">-- Select --</option>
+                        <option value="no">No</option>
+                        <option value="yes">Yes (rental, business, investments)</option>
+                    </select>
+                    <div class="field-error" id="error-foreignIncome"></div>
+                </div>
 
-        <div class="global-error" id="globalError"></div>
-        <button class="btn-primary" type="button" id="snapshotButton" onclick="calculateSnapshot()">Calculate my 2026 salary snapshot</button>
-        <div class="status-line" id="jsStatus">Calculator loading...</div>
-        <p class="small-print">Preliminary estimate only. No tax filing, legal, or insurance recommendation.</p>
-      </section>
-
-      <section id="resultsContainer" class="results-section" aria-label="Salary calculator results">
-        <div class="salary-display">
-          <div style="font-size:14px;color:rgba(10,10,10,0.78);font-weight:800;">Annual Gross Salary</div>
-          <div class="salary-value" id="displayGross">€0</div>
-          <div style="font-size:12px;color:rgba(10,10,10,0.72);margin-top:8px;">Brutto</div>
-        </div>
-
-        <div class="card">
-          <h3>Where Your Salary Goes</h3>
-          <div class="bars" id="salaryBars"></div>
-        </div>
-
-        <div class="card" style="margin-top:18px;">
-          <div class="breakdown-items">
-            <div class="breakdown-item">
-              <div style="font-size:12px;color:#999;">Estimated Annual Net</div>
-              <div class="breakdown-value" id="nettoValue">€0</div>
-              <div style="font-size:12px;color:#999;margin-top:5px;" id="nettoMonthly">€0/month</div>
+                <button class="btn-primary" onclick="calculateSnapshot()">Calculate my 2026 salary snapshot</button>
+                <p class="small-print">Preliminary estimate only. No tax filing, legal, or insurance recommendation.</p>
             </div>
-            <div class="breakdown-item">
-              <div style="font-size:12px;color:#999;">Estimated Annual Deductions</div>
-              <div class="breakdown-value" id="deductionsValue">€0</div>
-              <div style="font-size:12px;color:#999;margin-top:5px;" id="deductionsMonthly">€0/month</div>
+
+            <div id="resultsContainer" class="results-section">
+                <div class="salary-display">
+                    <div style="font-size: 14px; color: rgba(10,10,10,0.78); font-weight: 700;">Annual Gross Salary</div>
+                    <div class="salary-value" id="displayGross">€0</div>
+                    <div style="font-size: 12px; color: rgba(10,10,10,0.72); margin-top: 8px;">Brutto</div>
+                </div>
+
+                <div class="card" style="margin-bottom: 22px;">
+                    <h3 style="margin-bottom: 15px;">Where Your Salary Goes</h3>
+                    <div class="chart-container">
+                        <canvas id="salaryChart"></canvas>
+                        <div class="chart-fallback" id="chartFallback"></div>
+                    </div>
+                    <div class="legend-items" id="chartLegend"></div>
+                </div>
+
+                <div class="card">
+                    <div class="breakdown-items">
+                        <div class="breakdown-item">
+                            <div style="font-size: 12px; color: #999;">Estimated Annual Net</div>
+                            <div class="breakdown-value" id="nettoValue">€0</div>
+                            <div style="font-size: 12px; color: #999; margin-top: 5px;" id="nettoMonthly">€0/month</div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div style="font-size: 12px; color: #999;">Estimated Annual Deductions</div>
+                            <div class="breakdown-value" id="deductionsValue">€0</div>
+                            <div style="font-size: 12px; color: #999; margin-top: 5px;" id="deductionsMonthly">€0/month</div>
+                        </div>
+                    </div>
+                    <div class="result-note" id="balanceCheck">Gross = net + listed deductions.</div>
+                </div>
             </div>
-          </div>
-          <div class="result-note" id="balanceCheck">Gross = net + listed deductions.</div>
         </div>
 
-        <div class="priority-section">
-          <div style="font-size:14px;opacity:0.9;font-weight:800;">🎯 Review Priority</div>
-          <div class="priority-value" id="priorityValue">Standard</div>
-          <div id="priorityRange" style="font-weight:800;">Preliminary salary profile</div>
-          <div id="priorityExplainer" style="font-size:13px;opacity:0.85;margin-top:12px;line-height:1.5;"></div>
+        <div id="fullResultsContainer" class="results-section">
+            <div class="card">
+                <div class="savings-section">
+                    <div style="font-size: 14px; opacity: 0.9; font-weight: 750;">🎯 Review Priority</div>
+                    <div class="savings-value" id="priorityValue">Medium</div>
+                    <div class="savings-range" id="priorityRange">Based on the complexity of your profile</div>
+                    <div class="savings-subtext" id="priorityExplainer">This is a lead-prioritization signal, not a promised saving.</div>
+                </div>
+
+                <div class="precision-note">
+                    <strong>📊 About This Estimate:</strong> This uses 2026 German income-tax tariff constants and 2026 social-insurance contribution ceilings. It remains a simplified salary snapshot. Exact payroll depends on state, age, insurer-specific Zusatzbeitrag, private-insurance premium, spouse income, payroll month, tax-free allowances, and individual deductible expenses.
+                </div>
+
+                <div class="warning-box">
+                    <p><strong>⚠️ This Is Not a Final German Payroll Calculation</strong><br>The calculator estimates German wage-tax and social-contribution structure. It does not calculate a tax return, treaty outcome, or private-insurance contract.</p>
+                    <ul>
+                        <li>Tax Classes V and VI are marked as lower precision because the real result depends on missing income context.</li>
+                        <li>Private health insurance is treated as a benchmark estimate only; actual premiums vary by tariff and employer subsidy.</li>
+                        <li>Kindergeld and Kinderfreibetrag are not added to salary net income.</li>
+                        <li>Care insurance assumes non-Saxony rules and age 23+ for childless users.</li>
+                    </ul>
+                </div>
+
+                <div class="section-divider">
+                    <h4>📊 Your Profile Breakdown</h4>
+                </div>
+                <div class="optimization-drivers" id="insightBox"></div>
+
+                <div class="deduction-table">
+                    <h3>Complete Deduction Breakdown</h3>
+                    <p style="color: #999; font-size: 14px; margin-bottom: 18px;">The rows below are the amounts included in the net calculation.</p>
+                    <div class="table-header">
+                        <div>Deduction Type</div>
+                        <div>% of Gross</div>
+                        <div>Annual Amount</div>
+                        <div>Monthly Amount</div>
+                    </div>
+                    <div id="deductionTableRows"></div>
+                </div>
+
+                <div style="margin-top: 28px;">
+                    <div class="section-divider">
+                        <h4>📋 Understanding Each Deduction</h4>
+                    </div>
+                    <div id="deductionExplanations"></div>
+                </div>
+
+                <div class="lead-capture-card">
+                    <h3>🎯 Next Step: Review the Variables Behind Your Result</h3>
+                    <p>Your salary snapshot is ready. The next step is to check which variables are actually controllable and which ones are fixed by law.</p>
+                    <p style="font-size: 13px; color: #999; margin-bottom: 0;">Leave your details only if you want a follow-up. The calculator result itself is available without contact details.</p>
+
+                    <div class="success-message" id="successMessage">✓ Your profile is ready. Opening consultation booking...</div>
+
+                    <div class="lead-grid">
+                        <div class="form-group">
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" placeholder="Your name" autocomplete="name">
+                            <div class="field-error" id="error-name"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone / WhatsApp</label>
+                            <input type="tel" id="phone" placeholder="+49 XXX XXXXX" autocomplete="tel">
+                            <div class="field-error" id="error-phone"></div>
+                        </div>
+                    </div>
+
+                    <label class="consent-row">
+                        <input type="checkbox" id="contactConsent">
+                        <span>I agree to be contacted about this financial snapshot. My details are used only for consultation follow-up.</span>
+                    </label>
+                    <div class="field-error" id="error-contactConsent"></div>
+
+                    <button class="cta-button" onclick="scheduleConsultation()" id="consultationButton">📅 Book a free first consultation</button>
+
+                    <p class="small-print" style="border-top: 1px solid rgba(212, 175, 55, 0.2); padding-top: 14px;">
+                        First consultation is free. No pressure. Preliminary orientation only.
+                    </p>
+                </div>
+            </div>
         </div>
-      </section>
     </div>
 
-    <section id="fullResultsContainer" class="results-section">
-      <div class="card" style="margin-top:24px;">
-        <div class="precision-note">
-          <strong>📊 About this estimate:</strong> This uses 2026 German income-tax tariff constants and 2026 social-insurance contribution ceilings. It remains a simplified salary snapshot. Exact payroll depends on state, age, insurer-specific additional contribution, private-insurance premium, spouse income, payroll month, tax-free allowances, and individual deductible expenses.
-        </div>
+    <script>
+        let salaryChart = null;
 
-        <div class="warning-box">
-          <p><strong>⚠️ This is not a final payroll calculation.</strong><br />The calculator estimates German wage-tax and social-contribution structure. It does not calculate a tax return, treaty outcome, or private-insurance contract.</p>
-        </div>
-
-        <div class="section-divider"><h4>📊 Profile Signals</h4></div>
-        <div class="optimization-drivers" id="insightBox"></div>
-
-        <div class="deduction-table">
-          <h3>Estimated Deduction Breakdown</h3>
-          <p style="color:#999;font-size:14px;margin-bottom:16px;">Rounded annual and monthly figures.</p>
-          <div class="table-header">
-            <div>Deduction Type</div>
-            <div>% of Gross</div>
-            <div>Annual Amount</div>
-            <div>Monthly Amount</div>
-          </div>
-          <div id="deductionTableRows"></div>
-        </div>
-
-        <div class="section-divider"><h4>📋 Understanding Each Deduction</h4></div>
-        <div id="deductionExplanations"></div>
-
-        <div class="card lead-capture-card">
-          <h3>Next Step: Review Your Snapshot</h3>
-          <p class="helper-text">Your snapshot is ready. Enter your contact details only if you want a follow-up or consultation review.</p>
-          <div class="success-message" id="successMessage">✓ Opening consultation booking...</div>
-
-          <div class="form-group">
-            <label for="name">Your Name</label>
-            <input type="text" id="name" autocomplete="name" placeholder="Your name" />
-            <div class="field-error" id="error-name"></div>
-          </div>
-          <div class="form-group">
-            <label for="phone">WhatsApp / Phone Number</label>
-            <input type="tel" id="phone" inputmode="tel" autocomplete="tel" placeholder="+49 XXX XXXXX" />
-            <div class="field-error" id="error-phone"></div>
-          </div>
-          <label class="consent-row" for="contactConsent">
-            <input type="checkbox" id="contactConsent" />
-            <span>I agree to be contacted about this financial snapshot. My details are used only for consultation follow-up.</span>
-          </label>
-          <div class="field-error" id="error-contactConsent"></div>
-
-          <button class="cta-button" type="button" id="consultationButton" onclick="scheduleConsultation()">📅 Book a free first consultation</button>
-          <p class="small-print">Replace the placeholder Calendly and webhook URLs before using this in paid traffic.</p>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <script>
-    (function () {
-      'use strict';
-
-      var salaryData = null;
-      var CONFIG_2026 = {
-        rvBbg: 101400,
-        kvPvBbg: 69750,
-        pensionEmployeeRate: 0.093,
-        unemploymentEmployeeRate: 0.013,
-        healthEmployeeRatePublicBenchmark: 0.0875,
-        churchTaxRate: 0.09,
-        soliSingleFreeTax: 20350,
-        soliJointFreeTax: 40700,
-        soliFullRate: 0.055,
-        soliMilderungRate: 0.119,
-        singleParentRelief: 4260,
-        additionalChildRelief: 240,
-        privateInsuranceThreshold: 77400
-      };
-
-      function byId(id) { return document.getElementById(id); }
-      function euro(value) { return '€' + Math.round(value || 0).toLocaleString('de-DE'); }
-      function pct(amount, gross) { return gross > 0 ? ((amount || 0) / gross * 100).toFixed(1) + '%' : '0.0%'; }
-      function trim(value) { return String(value || '').replace(/^\s+|\s+$/g, ''); }
-
-      function parseSalary(value) {
-        var raw = trim(value);
-        var cleaned;
-        if (!raw) return 0;
-        cleaned = raw.replace(/\s/g, '').replace(/€/g, '');
-        if (cleaned.indexOf(',') > -1 && cleaned.indexOf('.') > -1) {
-          cleaned = cleaned.replace(/\./g, '').replace(',', '.');
-        } else if (cleaned.indexOf(',') > -1) {
-          cleaned = cleaned.replace(',', '.');
-        } else {
-          cleaned = cleaned.replace(/\./g, '');
-        }
-        return parseFloat(cleaned) || 0;
-      }
-
-      function clearErrors(scopeSelector) {
-        var root = scopeSelector ? document.querySelector(scopeSelector) : document;
-        var errors, fields, i;
-        if (!root) root = document;
-        errors = root.querySelectorAll('.field-error');
-        fields = root.querySelectorAll('input, select');
-        for (i = 0; i < errors.length; i++) errors[i].textContent = '';
-        for (i = 0; i < fields.length; i++) fields[i].classList.remove('error');
-        if (!scopeSelector && byId('globalError')) {
-          byId('globalError').textContent = '';
-          byId('globalError').classList.remove('active');
-        }
-      }
-
-      function showError(fieldId, message) {
-        var field = byId(fieldId);
-        var error = byId('error-' + fieldId);
-        if (field) field.classList.add('error');
-        if (error) error.textContent = message;
-      }
-
-      function showGlobalError(message) {
-        var el = byId('globalError');
-        if (!el) return;
-        el.textContent = message;
-        el.classList.add('active');
-      }
-
-      function incomeTax2026(zve) {
-        var x = Math.floor(Math.max(0, zve));
-        var y, z, tax;
-        if (x <= 12348) tax = 0;
-        else if (x <= 17799) { y = (x - 12348) / 10000; tax = (914.51 * y + 1400) * y; }
-        else if (x <= 69878) { z = (x - 17799) / 10000; tax = (173.10 * z + 2397) * z + 1034.87; }
-        else if (x <= 277825) tax = 0.42 * x - 11135.63;
-        else tax = 0.45 * x - 19470.38;
-        return Math.max(0, tax);
-      }
-
-      function careEmployeeRate(children) {
-        if (children === 0) return 0.024;
-        if (children === 1) return 0.018;
-        if (children === 2) return 0.0155;
-        return 0.013;
-      }
-
-      function estimateIncomeTaxByClass(taxableIncome, taxClass, children) {
-        var taxable = Math.max(0, taxableIncome);
-        var relief;
-        if (taxClass === 'II') {
-          relief = CONFIG_2026.singleParentRelief + Math.max(0, children - 1) * CONFIG_2026.additionalChildRelief;
-          return { amount: incomeTax2026(Math.max(0, taxable - relief)), precision: 'moderate', note: 'Tax Class II estimate includes simplified single-parent relief.' };
-        }
-        if (taxClass === 'III') {
-          return { amount: 2 * incomeTax2026(taxable / 2), precision: 'moderate', note: 'Tax Class III is approximated with income splitting. Spouse income can materially change the final result.' };
-        }
-        if (taxClass === 'V') {
-          return { amount: incomeTax2026(taxable) * 1.45, precision: 'low', note: 'Tax Class V depends strongly on spouse income. This is a rough screening estimate.' };
-        }
-        if (taxClass === 'VI') {
-          return { amount: incomeTax2026(taxable) * 1.20, precision: 'low', note: 'Tax Class VI depends on the main employment and payroll context. This is a rough screening estimate.' };
-        }
-        return { amount: incomeTax2026(taxable), precision: 'standard', note: 'Estimated using the 2026 German income-tax tariff.' };
-      }
-
-      function calculateSoli(incomeTax, taxClass) {
-        var freeAmount = taxClass === 'III' ? CONFIG_2026.soliJointFreeTax : CONFIG_2026.soliSingleFreeTax;
-        var fullSoli, milderungSoli;
-        if (incomeTax <= freeAmount) return 0;
-        fullSoli = incomeTax * CONFIG_2026.soliFullRate;
-        milderungSoli = (incomeTax - freeAmount) * CONFIG_2026.soliMilderungRate;
-        return Math.max(0, Math.min(fullSoli, milderungSoli));
-      }
-
-      function complexityScore(profile) {
-        var score = 0;
-        if (profile.gross >= 60000) score += 1;
-        if (profile.gross >= CONFIG_2026.privateInsuranceThreshold) score += 1;
-        if (profile.taxClass === 'III') score += 1;
-        if (profile.taxClass === 'V' || profile.taxClass === 'VI') score += 2;
-        if (profile.children > 0) score += 1;
-        if (profile.healthInsurance === 'privat') score += 2;
-        if (profile.foreignIncome === 'yes') score += 3;
-        if (profile.churchTax === 'yes') score += 1;
-        if (profile.homeCountry === 'brazil' || profile.homeCountry === 'usa') score += 1;
-        if (profile.precision === 'low') score += 1;
-        return score;
-      }
-
-      function priorityFromScore(score) {
-        if (score >= 6) return { label: 'High', sub: 'Several variables need a closer review.', explainer: 'This does not mean guaranteed savings. It means the profile is too complex for a simple salary estimate.' };
-        if (score >= 3) return { label: 'Medium', sub: 'Some variables may affect your final net position.', explainer: 'A review can separate fixed deductions from controllable planning variables.' };
-        return { label: 'Standard', sub: 'Your profile has fewer visible complexity drivers.', explainer: 'A standard setup can still benefit from orientation, but fewer high-impact variables are visible from this snapshot.' };
-      }
-
-      function calculateDetailedTaxes(gross, taxClass, children, healthInsurance, churchTax, homeCountry, foreignIncome) {
-        var pensionBase = Math.min(gross, CONFIG_2026.rvBbg);
-        var kvPvBase = Math.min(gross, CONFIG_2026.kvPvBbg);
-        var pension = pensionBase * CONFIG_2026.pensionEmployeeRate;
-        var unemployment = pensionBase * CONFIG_2026.unemploymentEmployeeRate;
-        var health = kvPvBase * CONFIG_2026.healthEmployeeRatePublicBenchmark;
-        var care = kvPvBase * careEmployeeRate(children);
-        var social = pension + unemployment + health + care;
-        var taxable = Math.max(0, gross - social);
-        var taxResult = estimateIncomeTaxByClass(taxable, taxClass, children);
-        var incomeTax = taxResult.amount;
-        var church = churchTax === 'yes' ? incomeTax * CONFIG_2026.churchTaxRate : 0;
-        var soli = calculateSoli(incomeTax, taxClass);
-        var deductionsTotal = social + incomeTax + church + soli;
-        var net = Math.max(0, gross - deductionsTotal);
-        var score, priority;
-        var deductions = [];
-
-        deductions.push({ name: 'Income Tax (Lohnsteuer)', amount: incomeTax, percentage: pct(incomeTax, gross), explanation: taxResult.note });
-        if (church > 0.5) deductions.push({ name: 'Church Tax (Kirchensteuer)', amount: church, percentage: pct(church, gross), explanation: 'Estimated at 9% of income tax. Bavaria and Baden-Württemberg use 8%; this tool avoids adding a state field.' });
-        if (soli > 0.5) deductions.push({ name: 'Solidarity Surcharge (Solidaritätszuschlag)', amount: soli, percentage: pct(soli, gross), explanation: 'Calculated with the 2026 exemption threshold and transition-zone logic.' });
-        deductions.push({ name: 'Pension Insurance (Rentenversicherung)', amount: pension, percentage: pct(pension, gross), explanation: 'Employee share of statutory pension insurance, capped at the 2026 pension contribution ceiling.' });
-        deductions.push({ name: 'Health Insurance (Krankenversicherung)', amount: health, percentage: pct(health, gross), explanation: healthInsurance === 'gesetzlich' ? 'Public health insurance estimate using the 2026 employee share plus average additional contribution, capped at the health-insurance ceiling.' : 'Private insurance benchmark only. Actual PKV net cost depends on tariff, age, health assessment, and employer subsidy.' });
-        deductions.push({ name: 'Unemployment Insurance (Arbeitslosenversicherung)', amount: unemployment, percentage: pct(unemployment, gross), explanation: 'Employee share of unemployment insurance, capped at the 2026 pension/unemployment contribution ceiling.' });
-        deductions.push({ name: 'Care Insurance (Pflegeversicherung)', amount: care, percentage: pct(care, gross), explanation: 'Employee share estimate. Childless users are calculated with the childless surcharge; 2+ children receive the child-related reduction. Non-Saxony assumption.' });
-
-        score = complexityScore({ gross: gross, taxClass: taxClass, children: children, healthInsurance: healthInsurance, churchTax: churchTax, homeCountry: homeCountry, foreignIncome: foreignIncome, precision: taxResult.precision });
-        priority = priorityFromScore(score);
-
-        return {
-          gross: gross,
-          annualNet: net,
-          monthlyNet: net / 12,
-          annualDeductions: deductionsTotal,
-          monthlyDeductions: deductionsTotal / 12,
-          incomeTax: incomeTax,
-          churchTaxAmount: church,
-          solidarityTax: soli,
-          pension: pension,
-          health: health,
-          unemployment: unemployment,
-          care: care,
-          deductionsList: deductions,
-          precision: taxResult.precision,
-          priority: priority,
-          complexityScore: score,
-          drivers: {
-            taxClass: taxClass,
-            hasChildren: children > 0,
-            hasPrivateInsurance: healthInsurance === 'privat',
-            hasForeignIncome: foreignIncome === 'yes',
-            paysChurchTax: churchTax === 'yes',
-            homeCountry: homeCountry,
-            abovePrivateInsuranceThreshold: gross >= CONFIG_2026.privateInsuranceThreshold
-          }
+        const CONFIG_2026 = {
+            taxYear: 2026,
+            rvBbg: 101400,
+            kvPvBbg: 69750,
+            pensionEmployeeRate: 0.093,
+            unemploymentEmployeeRate: 0.013,
+            healthEmployeeRatePublicBenchmark: 0.0875,
+            churchTaxRate: 0.09,
+            soliSingleFreeTax: 20350,
+            soliJointFreeTax: 40700,
+            soliFullRate: 0.055,
+            soliMilderungRate: 0.119,
+            singleParentRelief: 4260,
+            additionalChildRelief: 240
         };
-      }
 
-      function validateCalculatorInputs() {
-        var gross = parseSalary(byId('grossSalary').value);
-        var fields = ['taxClass', 'homeCountry', 'children', 'healthInsurance', 'churchTax', 'foreignIncome'];
-        var hasErrors = false;
-        var i, id;
-        clearErrors();
-        if (!gross || gross <= 0) { showError('grossSalary', '*enter a valid annual gross salary'); hasErrors = true; }
-        if (gross > 1000000) { showError('grossSalary', '*this simplified calculator is designed for salaries below €1,000,000'); hasErrors = true; }
-        for (i = 0; i < fields.length; i++) {
-          id = fields[i];
-          if (!byId(id).value) { showError(id, '*mandatory field'); hasErrors = true; }
+        function euro(value) {
+            return '€' + Math.round(value).toLocaleString('de-DE');
         }
-        if (hasErrors) showGlobalError('Please complete the highlighted fields.');
-        return !hasErrors;
-      }
 
-      function displayResults(c) {
-        byId('displayGross').textContent = euro(c.gross);
-        byId('nettoValue').textContent = euro(c.annualNet);
-        byId('nettoMonthly').textContent = euro(c.monthlyNet) + '/month';
-        byId('deductionsValue').textContent = euro(c.annualDeductions);
-        byId('deductionsMonthly').textContent = euro(c.monthlyDeductions) + '/month';
-        byId('balanceCheck').textContent = euro(c.gross) + ' gross = ' + euro(c.annualNet) + ' net + ' + euro(c.annualDeductions) + ' estimated deductions. Minor differences may occur from rounding.';
-        byId('priorityValue').textContent = c.priority.label;
-        byId('priorityRange').textContent = c.priority.sub;
-        byId('priorityExplainer').textContent = c.priority.explainer;
-        byId('consultationButton').textContent = '📅 Review my ' + c.priority.label.toLowerCase() + '-priority snapshot';
-        createBars(c);
-        createInsights(c);
-        createDeductionTable(c.deductionsList);
-        createExplanations(c.deductionsList);
-      }
-
-      function createBars(c) {
-        var items = [
-          { label: 'Net', amount: c.annualNet },
-          { label: 'Income Tax', amount: c.incomeTax },
-          { label: 'Church Tax', amount: c.churchTaxAmount },
-          { label: 'Soli', amount: c.solidarityTax },
-          { label: 'Pension', amount: c.pension },
-          { label: 'Health', amount: c.health },
-          { label: 'Unemployment', amount: c.unemployment },
-          { label: 'Care', amount: c.care }
-        ];
-        var html = '';
-        var i, item, width;
-        for (i = 0; i < items.length; i++) {
-          item = items[i];
-          if (item.amount <= 0.5) continue;
-          width = Math.max(2, Math.min(100, item.amount / c.gross * 100));
-          html += '<div class="bar-row"><div class="bar-label"><span>' + item.label + '</span><span>' + euro(item.amount) + ' · ' + pct(item.amount, c.gross) + '</span></div><div class="bar-track"><div class="bar-fill" style="width:' + width.toFixed(1) + '%"></div></div></div>';
+        function percentageOfGross(amount, gross) {
+            if (!gross || gross <= 0) return '0.0%';
+            return (amount / gross * 100).toFixed(1) + '%';
         }
-        byId('salaryBars').innerHTML = html;
-      }
 
-      function createInsights(c) {
-        var d = c.drivers;
-        var insights = [];
-        var html = '';
-        var i;
-        if (c.precision === 'low') insights.push({ title: 'Low-Precision Tax Class', desc: 'Your tax class needs context that this fast calculator does not collect.' });
-        if (d.taxClass === 'III') insights.push({ title: 'Married Tax Structure', desc: 'Tax Class III can change net salary materially, but spouse income matters for final planning.' });
-        if (d.hasChildren) insights.push({ title: 'Children Affect Contributions', desc: 'Children can reduce the employee share of care insurance. Child benefit is not included in salary net here.' });
-        if (d.hasPrivateInsurance) insights.push({ title: 'Private Insurance Needs Review', desc: 'PKV cannot be modeled accurately from salary alone. Premium, tariff, age, and employer subsidy matter.' });
-        if (d.hasForeignIncome) insights.push({ title: 'Cross-Border Complexity', desc: 'Foreign income changes the review from salary calculation to coordination between jurisdictions.' });
-        if (d.paysChurchTax) insights.push({ title: 'Church Tax Visible', desc: 'Church tax is included as an estimated 9% of income tax. Bavaria and Baden-Württemberg use 8%.' });
-        if (d.homeCountry === 'brazil' || d.homeCountry === 'usa') insights.push({ title: d.homeCountry === 'brazil' ? 'Brazil-Germany Coordination' : 'US-Germany Coordination', desc: 'Your country selection suggests treaty and reporting questions may need a separate review.' });
-        if (d.abovePrivateInsuranceThreshold) insights.push({ title: 'High-Income Insurance Threshold', desc: 'Your salary is above the 2026 annual insurance threshold often relevant for GKV/PKV decisions.' });
-        if (insights.length === 0) insights.push({ title: 'Standard Salary Profile', desc: 'Few high-complexity variables are visible. The estimate is still not a final payroll calculation.' });
-        for (i = 0; i < insights.length; i++) html += '<div class="driver-card"><h5>✓ ' + insights[i].title + '</h5><p>' + insights[i].desc + '</p></div>';
-        byId('insightBox').innerHTML = html;
-      }
-
-      function createDeductionTable(deductions) {
-        var html = '';
-        var i, d;
-        for (i = 0; i < deductions.length; i++) {
-          d = deductions[i];
-          html += '<div class="table-row"><div class="deduction-name">' + d.name + '</div><div data-label="% of Gross" style="color:#b0b0b0;">' + d.percentage + '</div><div data-label="Annual Amount" class="deduction-value">' + euro(d.amount) + '</div><div data-label="Monthly Amount" class="deduction-value">' + euro(d.amount / 12) + '</div></div>';
+        function clearErrors(scopeSelector) {
+            const scope = scopeSelector ? document.querySelector(scopeSelector) : document;
+            scope.querySelectorAll('.field-error').forEach(el => { el.textContent = ''; });
+            scope.querySelectorAll('input, select').forEach(el => { el.classList.remove('error'); });
         }
-        byId('deductionTableRows').innerHTML = html;
-      }
 
-      function createExplanations(deductions) {
-        var html = '';
-        var i, d;
-        for (i = 0; i < deductions.length; i++) {
-          d = deductions[i];
-          html += '<div style="margin-bottom:16px;padding:15px;background:rgba(212,175,55,0.1);border-left:4px solid #d4af37;border-radius:5px;"><h4 style="color:#d4af37;margin-bottom:8px;font-size:15px;font-weight:750;">' + d.name + '</h4><p style="color:#b0b0b0;font-size:14px;line-height:1.55;margin-bottom:10px;">' + d.explanation + '</p><p style="color:#d4af37;font-size:13px;font-weight:750;">' + euro(d.amount) + '/year | ' + euro(d.amount / 12) + '/month</p></div>';
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const error = document.getElementById('error-' + fieldId);
+            if (field) field.classList.add('error');
+            if (error) error.textContent = message;
         }
-        byId('deductionExplanations').innerHTML = html;
-      }
 
-      function calculateSnapshot() {
-        var gross, taxClass, homeCountry, children, healthInsurance, churchTax, foreignIncome, c;
-        try {
-          if (!validateCalculatorInputs()) return false;
-          gross = parseSalary(byId('grossSalary').value);
-          taxClass = byId('taxClass').value;
-          homeCountry = byId('homeCountry').value;
-          children = parseInt(byId('children').value, 10);
-          healthInsurance = byId('healthInsurance').value;
-          churchTax = byId('churchTax').value;
-          foreignIncome = byId('foreignIncome').value;
-          c = calculateDetailedTaxes(gross, taxClass, children, healthInsurance, churchTax, homeCountry, foreignIncome);
+        function incomeTax2026(zve) {
+            const x = Math.floor(Math.max(0, zve));
+            let tax = 0;
 
-          salaryData = {
-            timestamp: new Date().toISOString(),
-            grossSalary: gross,
-            taxClass: taxClass,
-            homeCountry: homeCountry,
-            children: children,
-            healthInsurance: healthInsurance,
-            churchTax: churchTax,
-            foreignIncome: foreignIncome,
-            estimatedNetIncome: Math.round(c.annualNet),
-            estimatedDeductions: Math.round(c.annualDeductions),
-            reviewPriority: c.priority.label,
-            complexityScore: c.complexityScore,
-            taxPrecision: c.precision
-          };
-          window.salaryData = salaryData;
-          displayResults(c);
-          byId('resultsContainer').classList.add('active');
-          byId('fullResultsContainer').classList.add('active');
-          setTimeout(function () {
-            try { byId('resultsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-            catch (e) { window.location.hash = 'resultsContainer'; }
-          }, 60);
-        } catch (error) {
-          showGlobalError('The calculator hit a script error. Open the browser console or send me a screenshot of this message.');
-          if (window.console && console.error) console.error('Calculator error:', error);
+            if (x <= 12348) {
+                tax = 0;
+            } else if (x <= 17799) {
+                const y = (x - 12348) / 10000;
+                tax = (914.51 * y + 1400) * y;
+            } else if (x <= 69878) {
+                const z = (x - 17799) / 10000;
+                tax = (173.10 * z + 2397) * z + 1034.87;
+            } else if (x <= 277825) {
+                tax = 0.42 * x - 11135.63;
+            } else {
+                tax = 0.45 * x - 19470.38;
+            }
+
+            return Math.max(0, tax);
         }
-        return false;
-      }
 
-      function validateLeadInputs() {
-        var name, phone, digits, ok;
-        clearErrors('.lead-capture-card');
-        name = trim(byId('name').value);
-        phone = trim(byId('phone').value);
-        digits = phone.replace(/\D/g, '');
-        ok = true;
-        if (!name) { showError('name', '*mandatory field'); ok = false; }
-        if (!phone || digits.length < 7) { showError('phone', '*enter a valid phone number'); ok = false; }
-        if (!byId('contactConsent').checked) { byId('error-contactConsent').textContent = '*required for follow-up contact'; ok = false; }
-        return ok;
-      }
-
-      var CALENDLY_BASE_URL = 'https://calendly.com/fabriscaique';
-
-      function buildCalendlyURL(name, phone) {
-        var base, params;
-        base = CALENDLY_BASE_URL.replace(/\/+$/, '');
-        params = [
-          'name=' + encodeURIComponent(name),
-          'phone=' + encodeURIComponent(phone),
-          'a1=' + encodeURIComponent(phone),
-          'utm_source=instagram',
-          'utm_medium=salary_snapshot',
-          'utm_campaign=expat_salary_snapshot_2026',
-          'utm_content=' + encodeURIComponent(window.salaryData.homeCountry || 'unknown')
-        ];
-        return base + '?' + params.join('&');
-      }
-
-      function sendLeadToBackend(data) {
-        var zapierWebhookURL = 'https://hooks.zapier.com/hooks/catch/YOUR_ZAPIER_ID/YOUR_ZAPIER_CODE/';
-        var payload;
-        if (zapierWebhookURL.indexOf('YOUR_ZAPIER_ID') !== -1) return;
-        payload = {
-          name: data.name,
-          phone: data.phone,
-          grossSalary: data.grossSalary,
-          estimatedNetIncome: data.estimatedNetIncome,
-          estimatedDeductions: data.estimatedDeductions,
-          taxClass: data.taxClass,
-          homeCountry: data.homeCountry,
-          children: data.children,
-          healthInsurance: data.healthInsurance,
-          churchTax: data.churchTax,
-          foreignIncome: data.foreignIncome,
-          reviewPriority: data.reviewPriority,
-          complexityScore: data.complexityScore,
-          taxPrecision: data.taxPrecision,
-          contactConsent: data.contactConsent,
-          timestamp: data.timestamp
-        };
-        try {
-          fetch(zapierWebhookURL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'application/json' }, keepalive: true }).catch(function () {});
-        } catch (e) {}
-      }
-
-      function scheduleConsultation() {
-        var name, phone, calendlyURL;
-        if (!window.salaryData) { alert('Please calculate your snapshot first.'); return false; }
-        if (!validateLeadInputs()) return false;
-        name = trim(byId('name').value);
-        phone = trim(byId('phone').value);
-        window.salaryData.name = name;
-        window.salaryData.phone = phone;
-        window.salaryData.contactConsent = true;
-        byId('successMessage').classList.add('active');
-        sendLeadToBackend(window.salaryData);
-        calendlyURL = buildCalendlyURL(name, phone);
-        window.location.assign(calendlyURL);
-        return false;
-      }
-
-      function initialize() {
-        var status = byId('jsStatus');
-        var snapshotButton = byId('snapshotButton');
-        var consultationButton = byId('consultationButton');
-        if (status) {
-          status.textContent = 'Calculator ready';
-          status.classList.add('status-ready');
+        function calculateCareEmployeeRate(children) {
+            if (children === 0) return 0.024;
+            if (children === 1) return 0.018;
+            if (children === 2) return 0.0155;
+            return 0.013;
         }
-        if (snapshotButton) {
-          snapshotButton.onclick = calculateSnapshot;
-        }
-        if (consultationButton) {
-          consultationButton.onclick = scheduleConsultation;
-        }
-      }
 
-      window.calculateSnapshot = calculateSnapshot;
-      window.scheduleConsultation = scheduleConsultation;
+        function estimateIncomeTaxByClass(taxableIncome, taxClass, children) {
+            let taxable = Math.max(0, taxableIncome);
+            let precision = 'standard';
+            let note = 'Estimated using the 2026 German income-tax tariff.';
 
-      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize, false);
-      else initialize();
-    }());
-  </script>
+            if (taxClass === 'II') {
+                const relief = CONFIG_2026.singleParentRelief + Math.max(0, children - 1) * CONFIG_2026.additionalChildRelief;
+                taxable = Math.max(0, taxable - relief);
+                precision = 'moderate';
+                note = 'Tax Class II estimate includes a simplified single-parent relief amount.';
+                return { amount: incomeTax2026(taxable), precision, note };
+            }
+
+            if (taxClass === 'III') {
+                precision = 'moderate';
+                note = 'Tax Class III is approximated with income splitting. Exact payroll depends on spouse income and payroll details.';
+                return { amount: 2 * incomeTax2026(taxable / 2), precision, note };
+            }
+
+            if (taxClass === 'V') {
+                precision = 'low';
+                note = 'Tax Class V depends strongly on spouse income. This is a rough lead-screening estimate, not a payroll result.';
+                return { amount: incomeTax2026(taxable) * 1.45, precision, note };
+            }
+
+            if (taxClass === 'VI') {
+                precision = 'low';
+                note = 'Tax Class VI depends on the main employment and payroll context. This is a rough lead-screening estimate.';
+                return { amount: incomeTax2026(taxable) * 1.20, precision, note };
+            }
+
+            return { amount: incomeTax2026(taxable), precision, note };
+        }
+
+        function calculateSoli(incomeTax, taxClass) {
+            const freeAmount = taxClass === 'III' ? CONFIG_2026.soliJointFreeTax : CONFIG_2026.soliSingleFreeTax;
+            if (incomeTax <= freeAmount) return 0;
+            const fullSoli = incomeTax * CONFIG_2026.soliFullRate;
+            const milderungSoli = (incomeTax - freeAmount) * CONFIG_2026.soliMilderungRate;
+            return Math.max(0, Math.min(fullSoli, milderungSoli));
+        }
+
+        function calculateDetailedTaxes(gross, taxClass, children, healthInsurance, churchTax, homeCountry, foreignIncome) {
+            const pensionBase = Math.min(gross, CONFIG_2026.rvBbg);
+            const kvPvBase = Math.min(gross, CONFIG_2026.kvPvBbg);
+
+            const pensionContribution = pensionBase * CONFIG_2026.pensionEmployeeRate;
+            const unemploymentInsurance = pensionBase * CONFIG_2026.unemploymentEmployeeRate;
+            const careRate = calculateCareEmployeeRate(children);
+            const careInsurance = kvPvBase * careRate;
+
+            const healthInsuranceRate = CONFIG_2026.healthEmployeeRatePublicBenchmark;
+            const healthInsuranceAmount = kvPvBase * healthInsuranceRate;
+
+            const totalSocialContributions = pensionContribution + healthInsuranceAmount + unemploymentInsurance + careInsurance;
+            const taxableIncomeEstimate = Math.max(0, gross - totalSocialContributions);
+            const taxResult = estimateIncomeTaxByClass(taxableIncomeEstimate, taxClass, children);
+            const incomeTax = taxResult.amount;
+            const churchTaxAmount = churchTax === 'yes' ? incomeTax * CONFIG_2026.churchTaxRate : 0;
+            const solidarityTax = calculateSoli(incomeTax, taxClass);
+
+            const totalDeductions = incomeTax + churchTaxAmount + solidarityTax + totalSocialContributions;
+            const netto = Math.max(0, gross - totalDeductions);
+            const roundingDelta = gross - netto - totalDeductions;
+
+            const deductions = [
+                { name: 'Income Tax (Lohnsteuer)', amount: incomeTax, percentage: percentageOfGross(incomeTax, gross), explanation: taxResult.note },
+                { name: 'Solidarity Surcharge (Solidaritätszuschlag)', amount: solidarityTax, percentage: percentageOfGross(solidarityTax, gross), explanation: 'Calculated with the 2026 exemption threshold and transition-zone logic. Most normal salaries have no Soli.' },
+                { name: 'Pension Insurance (Rentenversicherung)', amount: pensionContribution, percentage: percentageOfGross(pensionContribution, gross), explanation: 'Employee share of statutory pension insurance, capped at the 2026 pension contribution ceiling.' },
+                { name: 'Health Insurance (Krankenversicherung)', amount: healthInsuranceAmount, percentage: percentageOfGross(healthInsuranceAmount, gross), explanation: healthInsurance === 'gesetzlich' ? 'Public health insurance estimate using the 2026 general employee share plus the average additional contribution, capped at the health-insurance ceiling.' : 'Private insurance benchmark only. Actual PKV premiums depend on tariff, age, health assessment, and employer subsidy.' },
+                { name: 'Unemployment Insurance (Arbeitslosenversicherung)', amount: unemploymentInsurance, percentage: percentageOfGross(unemploymentInsurance, gross), explanation: 'Employee share of unemployment insurance, capped at the 2026 pension/unemployment contribution ceiling.' },
+                { name: 'Care Insurance (Pflegeversicherung)', amount: careInsurance, percentage: percentageOfGross(careInsurance, gross), explanation: 'Employee share estimate. Childless users are calculated with the childless surcharge; 2+ children receive the child-related reduction. Non-Saxony assumption.' }
+            ];
+
+            if (churchTax === 'yes') {
+                deductions.splice(1, 0, { name: 'Church Tax (Kirchensteuer)', amount: churchTaxAmount, percentage: percentageOfGross(churchTaxAmount, gross), explanation: 'Estimated at 9% of income tax for Berlin and most federal states. Bavaria and Baden-Württemberg use 8%; this tool keeps one low-friction assumption.' });
+            }
+
+            const visibleDeductions = deductions.filter(d => d.amount > 0.5);
+            const complexityScore = calculateComplexityScore({ taxClass, children, healthInsurance, churchTax, homeCountry, foreignIncome, taxPrecision: taxResult.precision, gross });
+            const priority = scoreToPriority(complexityScore);
+
+            return {
+                monthlyGross: gross / 12,
+                monthlyNetto: netto / 12,
+                monthlyDeductions: totalDeductions / 12,
+                annualNetto: netto,
+                annualDeductions: totalDeductions,
+                taxableIncomeEstimate,
+                incomeTax,
+                churchTax: churchTaxAmount,
+                solidarityTax,
+                pensionContribution,
+                healthInsurance: healthInsuranceAmount,
+                unemploymentInsurance,
+                careInsurance,
+                careRate,
+                deductionsList: visibleDeductions,
+                netPercentage: ((netto / gross) * 100).toFixed(1),
+                deductionsPercentage: ((totalDeductions / gross) * 100).toFixed(1),
+                roundingDelta,
+                precision: taxResult.precision,
+                precisionNote: taxResult.note,
+                priority,
+                complexityScore,
+                drivers: {
+                    taxClass,
+                    hasChildren: children > 0,
+                    childCount: children,
+                    hasPrivateInsurance: healthInsurance === 'privat',
+                    hasForeignIncome: foreignIncome === 'yes',
+                    paysChurchTax: churchTax === 'yes',
+                    homeCountry,
+                    aboveHealthThreshold: gross > CONFIG_2026.kvPvBbg,
+                    abovePrivateInsuranceThreshold: gross >= 77400
+                }
+            };
+        }
+
+        function calculateComplexityScore(profile) {
+            let score = 0;
+            if (profile.gross >= 60000) score += 1;
+            if (profile.gross >= 77400) score += 1;
+            if (profile.taxClass === 'III') score += 1;
+            if (profile.taxClass === 'V' || profile.taxClass === 'VI') score += 2;
+            if (profile.children > 0) score += 1;
+            if (profile.healthInsurance === 'privat') score += 2;
+            if (profile.foreignIncome === 'yes') score += 3;
+            if (profile.churchTax === 'yes') score += 1;
+            if (['brazil', 'usa'].includes(profile.homeCountry)) score += 1;
+            if (profile.taxPrecision === 'low') score += 1;
+            return score;
+        }
+
+        function scoreToPriority(score) {
+            if (score >= 6) return { label: 'High', sub: 'Several variables need a closer review.', explainer: 'This does not mean guaranteed savings. It means the profile is too complex for a simple salary estimate.' };
+            if (score >= 3) return { label: 'Medium', sub: 'Some variables may affect your final net position.', explainer: 'A review can separate fixed deductions from controllable planning variables.' };
+            return { label: 'Standard', sub: 'Your profile has fewer visible complexity drivers.', explainer: 'A standard setup can still benefit from orientation, but fewer high-impact variables are visible from this snapshot.' };
+        }
+
+        function validateCalculatorInputs() {
+            clearErrors();
+            let hasErrors = false;
+            const grossSalary = parseFloat(document.getElementById('grossSalary').value);
+            const requiredFields = ['taxClass', 'homeCountry', 'children', 'healthInsurance', 'churchTax', 'foreignIncome'];
+
+            if (!grossSalary || grossSalary <= 0) {
+                showError('grossSalary', '*enter a valid annual gross salary');
+                hasErrors = true;
+            }
+
+            if (grossSalary > 1000000) {
+                showError('grossSalary', '*this simplified calculator is designed for salaries below €1,000,000');
+                hasErrors = true;
+            }
+
+            requiredFields.forEach(fieldId => {
+                if (!document.getElementById(fieldId).value) {
+                    showError(fieldId, '*mandatory field');
+                    hasErrors = true;
+                }
+            });
+
+            return !hasErrors;
+        }
+
+        function calculateSnapshot() {
+            try {
+                if (!validateCalculatorInputs()) return;
+
+                const grossSalary = parseFloat(document.getElementById('grossSalary').value);
+                const taxClass = document.getElementById('taxClass').value;
+                const homeCountry = document.getElementById('homeCountry').value;
+                const children = parseInt(document.getElementById('children').value, 10);
+                const healthInsurance = document.getElementById('healthInsurance').value;
+                const churchTax = document.getElementById('churchTax').value;
+                const foreignIncome = document.getElementById('foreignIncome').value;
+
+                const calculations = calculateDetailedTaxes(grossSalary, taxClass, children, healthInsurance, churchTax, homeCountry, foreignIncome);
+
+                window.salaryData = {
+                    timestamp: new Date().toISOString(),
+                    grossSalary,
+                    taxClass,
+                    homeCountry,
+                    children,
+                    healthInsurance,
+                    churchTax,
+                    foreignIncome,
+                    estimatedNetIncome: Math.round(grossSalary) - Math.round(calculations.annualDeductions),
+                    estimatedDeductions: Math.round(calculations.annualDeductions),
+                    reviewPriority: calculations.priority.label,
+                    complexityScore: calculations.complexityScore,
+                    taxPrecision: calculations.precision,
+                    ...calculations
+                };
+
+                displayResults(grossSalary, calculations);
+                document.getElementById('resultsContainer').classList.add('active');
+                document.getElementById('fullResultsContainer').classList.add('active');
+
+                setTimeout(() => {
+                    document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 120);
+            } catch (error) {
+                console.error('Error calculating snapshot:', error);
+                alert('An error occurred. Please check your inputs and try again.');
+            }
+        }
+
+        function displayResults(gross, calculations) {
+            const displayGross = Math.round(gross);
+            const displayDeductions = Math.round(calculations.annualDeductions);
+            const displayNet = displayGross - displayDeductions;
+            document.getElementById('displayGross').textContent = euro(displayGross);
+            document.getElementById('nettoValue').textContent = euro(displayNet);
+            document.getElementById('nettoMonthly').textContent = euro(displayNet / 12);
+            document.getElementById('deductionsValue').textContent = euro(displayDeductions);
+            document.getElementById('deductionsMonthly').textContent = euro(displayDeductions / 12);
+            document.getElementById('balanceCheck').textContent = `${euro(displayGross)} gross = ${euro(displayNet)} net + ${euro(displayDeductions)} estimated deductions.`;
+
+            document.getElementById('priorityValue').textContent = calculations.priority.label;
+            document.getElementById('priorityRange').textContent = calculations.priority.sub;
+            document.getElementById('priorityExplainer').textContent = calculations.priority.explainer;
+
+            createDetailedChart(calculations);
+            createInsights(calculations);
+            createDeductionTable(calculations.deductionsList);
+            createExplanations(calculations.deductionsList);
+            document.getElementById('consultationButton').textContent = `📅 Review my ${calculations.priority.label.toLowerCase()}-priority snapshot`;
+        }
+
+        function createDetailedChart(calculations) {
+            const chartData = [
+                { label: 'Net (' + calculations.netPercentage + '%)', amount: calculations.annualNetto, color: '#2ecc71' },
+                { label: 'Income Tax', amount: calculations.incomeTax, color: '#e74c3c' },
+                { label: 'Church Tax', amount: calculations.churchTax, color: '#c0392b' },
+                { label: 'Soli', amount: calculations.solidarityTax, color: '#a93226' },
+                { label: 'Pension', amount: calculations.pensionContribution, color: '#ec7063' },
+                { label: 'Health', amount: calculations.healthInsurance, color: '#f1948a' },
+                { label: 'Unemployment', amount: calculations.unemploymentInsurance, color: '#fadbd8' },
+                { label: 'Care', amount: calculations.careInsurance, color: '#f5b7b1' }
+            ].filter(item => item.amount > 0.5);
+
+            const labels = chartData.map(i => i.label);
+            const values = chartData.map(i => Math.max(0, i.amount));
+            const colors = chartData.map(i => i.color);
+            const legendHTML = chartData.map(item => `
+                <div class="legend-item">
+                    <div class="legend-color" style="background: ${item.color};"></div>
+                    <span style="font-size: 13px; color: #b0b0b0;">${item.label}: ${euro(item.amount)}</span>
+                </div>
+            `).join('');
+            document.getElementById('chartLegend').innerHTML = legendHTML;
+
+            const fallback = document.getElementById('chartFallback');
+            const canvas = document.getElementById('salaryChart');
+
+            if (typeof Chart === 'undefined') {
+                canvas.style.display = 'none';
+                fallback.style.display = 'block';
+                fallback.innerHTML = chartData.map(item => `${item.label}: <strong>${euro(item.amount)}</strong>`).join('<br>');
+                return;
+            }
+
+            canvas.style.display = 'block';
+            fallback.style.display = 'none';
+            const ctx = canvas.getContext('2d');
+            if (salaryChart) salaryChart.destroy();
+
+            salaryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: colors,
+                        borderColor: ['#1a1a1a'],
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + euro(context.raw);
+                                }
+                            }
+                        }
+                    },
+                    animation: { duration: 500 }
+                }
+            });
+        }
+
+        function createInsights(calculations) {
+            const d = calculations.drivers;
+            const insights = [];
+
+            if (calculations.precision === 'low') {
+                insights.push({ title: 'Low-Precision Tax Class', desc: 'Your tax class needs context that this fast calculator does not collect.' });
+            }
+            if (d.taxClass === 'III') {
+                insights.push({ title: 'Married Tax Structure', desc: 'Tax Class III can change net salary materially, but spouse income matters for final planning.' });
+            }
+            if (d.hasChildren) {
+                insights.push({ title: 'Children Affect Contributions', desc: 'Children can reduce the employee share of care insurance. Child benefit is not included in salary net here.' });
+            }
+            if (d.hasPrivateInsurance) {
+                insights.push({ title: 'Private Insurance Needs Review', desc: 'PKV cannot be modeled accurately from salary alone. Premium, tariff, age, and employer subsidy matter.' });
+            }
+            if (d.hasForeignIncome) {
+                insights.push({ title: 'Cross-Border Complexity', desc: 'Foreign income changes the review from salary calculation to coordination between jurisdictions.' });
+            }
+            if (d.paysChurchTax) {
+                insights.push({ title: 'Church Tax Visible', desc: 'Church tax is included as an estimated 9% of income tax for Berlin/default. Bavaria and Baden-Württemberg use 8%.' });
+            }
+            if (['brazil', 'usa'].includes(d.homeCountry)) {
+                insights.push({ title: d.homeCountry === 'brazil' ? 'Brazil-Germany Coordination' : 'US-Germany Coordination', desc: 'Your country selection suggests treaty and reporting questions may need a separate review.' });
+            }
+            if (d.abovePrivateInsuranceThreshold) {
+                insights.push({ title: 'High-Income Insurance Threshold', desc: 'Your salary is above the 2026 annual insurance threshold often relevant for GKV/PKV decisions.' });
+            }
+            if (insights.length === 0) {
+                insights.push({ title: 'Standard Salary Profile', desc: 'Few high-complexity variables are visible. The estimate is still not a final payroll calculation.' });
+            }
+
+            document.getElementById('insightBox').innerHTML = insights.map(i => `
+                <div class="driver-card">
+                    <h5>✓ ${i.title}</h5>
+                    <p>${i.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        function createDeductionTable(deductions) {
+            document.getElementById('deductionTableRows').innerHTML = deductions.map(d => `
+                <div class="table-row">
+                    <div class="deduction-name">${d.name}</div>
+                    <div data-label="% of Gross" style="color: #b0b0b0;">${d.percentage}</div>
+                    <div data-label="Annual Amount" class="deduction-value">${euro(d.amount)}</div>
+                    <div data-label="Monthly Amount" class="deduction-value">${euro(d.amount / 12)}</div>
+                </div>
+            `).join('');
+        }
+
+        function createExplanations(deductions) {
+            document.getElementById('deductionExplanations').innerHTML = deductions.map(d => `
+                <div style="margin-bottom: 16px; padding: 15px; background: rgba(212, 175, 55, 0.1); border-left: 4px solid #d4af37; border-radius: 5px;">
+                    <h4 style="color: #d4af37; margin-bottom: 8px; font-size: 15px; font-weight: 750;">${d.name}</h4>
+                    <p style="color: #b0b0b0; font-size: 14px; line-height: 1.55; margin-bottom: 10px;">${d.explanation}</p>
+                    <p style="color: #d4af37; font-size: 13px; font-weight: 750;">${euro(d.amount)}/year | ${euro(d.amount / 12)}/month</p>
+                </div>
+            `).join('');
+        }
+
+        function validateLeadInputs() {
+            clearErrors('.lead-capture-card');
+            let hasErrors = false;
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const consent = document.getElementById('contactConsent').checked;
+            const phoneDigitsOnly = phone.replace(/\D/g, '');
+
+            if (!name) {
+                showError('name', '*mandatory field');
+                hasErrors = true;
+            }
+            if (!phone || phoneDigitsOnly.length < 7) {
+                showError('phone', '*enter a valid phone number');
+                hasErrors = true;
+            }
+            if (!consent) {
+                document.getElementById('error-contactConsent').textContent = '*required for follow-up contact';
+                hasErrors = true;
+            }
+            return !hasErrors;
+        }
+
+        function scheduleConsultation() {
+            if (!window.salaryData) {
+                alert('Please calculate your snapshot first.');
+                return;
+            }
+            if (!validateLeadInputs()) return;
+
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const leadData = { ...window.salaryData, name, phone, contactConsent: true };
+            window.salaryData = leadData;
+
+            document.getElementById('successMessage').classList.add('active');
+            sendLeadToBackend(leadData);
+
+            const calendlyURL = 'https://calendly.com/fabriscaique';
+
+            setTimeout(() => {
+                window.location.href = calendlyURL;
+            }, 700);
+        }
+
+        function sendLeadToBackend(data) {
+            const zapierWebhookURL = 'https://hooks.zapier.com/hooks/catch/YOUR_ZAPIER_ID/YOUR_ZAPIER_CODE/';
+
+            if (zapierWebhookURL.includes('YOUR_ZAPIER_ID')) {
+                console.warn('Zapier webhook placeholder is still active. Replace before publishing.');
+                return;
+            }
+
+            const leadPayload = {
+                name: data.name,
+                phone: data.phone,
+                grossSalary: data.grossSalary,
+                estimatedNetIncome: data.estimatedNetIncome,
+                estimatedDeductions: data.estimatedDeductions,
+                taxClass: data.taxClass,
+                homeCountry: data.homeCountry,
+                children: data.children,
+                healthInsurance: data.healthInsurance,
+                churchTax: data.churchTax,
+                foreignIncome: data.foreignIncome,
+                reviewPriority: data.reviewPriority,
+                complexityScore: data.complexityScore,
+                taxPrecision: data.taxPrecision,
+                contactConsent: data.contactConsent,
+                timestamp: data.timestamp
+            };
+
+            fetch(zapierWebhookURL, {
+                method: 'POST',
+                body: JSON.stringify(leadPayload),
+                headers: { 'Content-Type': 'application/json' },
+                keepalive: true
+            }).catch(error => {
+                console.warn('Lead webhook failed:', error);
+            });
+        }
+    </script>
 </body>
 </html>
