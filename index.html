@@ -882,41 +882,40 @@
         }
 
         function sendLeadToBackend(data) {
-            const zapierWebhookURL = 'https://hooks.zapier.com/hooks/catch/YOUR_ZAPIER_ID/YOUR_ZAPIER_CODE/';
-
-            if (zapierWebhookURL.includes('YOUR_ZAPIER_ID')) {
-                console.warn('Zapier webhook placeholder is still active. Replace before publishing.');
-                return;
-            }
+            const googleScriptURL = 'https://script.google.com/macros/s/AKfycbzgVpdF5RPMuhvFj-Y1cb3pj6Sg5nh8FsDid2SWI1sGf9JtQxYa5bxAhaiIVEraXBuG/exec';
 
             const leadPayload = {
-                name: data.name,
-                phone: data.phone,
-                grossSalary: data.grossSalary,
-                estimatedNetIncome: data.estimatedNetIncome,
-                estimatedDeductions: data.estimatedDeductions,
-                taxClass: data.taxClass,
-                homeCountry: data.homeCountry,
-                children: data.children,
-                healthInsurance: data.healthInsurance,
-                churchTax: data.churchTax,
-                foreignIncome: data.foreignIncome,
-                reviewPriority: data.reviewPriority,
-                complexityScore: data.complexityScore,
-                taxPrecision: data.taxPrecision,
-                contactConsent: data.contactConsent,
-                timestamp: data.timestamp
+                timestamp: data.timestamp || new Date().toISOString(),
+                name: data.name || '',
+                phone: data.phone || '',
+                gross_salary: data.grossSalary || '',
+                tax_class: data.taxClass || '',
+                home_country: data.homeCountry || '',
+                children: data.children || '',
+                health_insurance: data.healthInsurance || '',
+                church: data.churchTax || '',
+                foreign_income: data.foreignIncome || '',
+                estimated_netto: data.estimatedNetIncome || Math.round(data.annualNetto || 0),
+                estimated_tax: data.estimatedDeductions || Math.round(data.annualDeductions || 0),
+                priority: data.reviewPriority || (data.priority && data.priority.label) || '',
+                consent: data.contactConsent === true ? 'yes' : 'no'
             };
 
-            fetch(zapierWebhookURL, {
-                method: 'POST',
-                body: JSON.stringify(leadPayload),
-                headers: { 'Content-Type': 'application/json' },
-                keepalive: true
-            }).catch(error => {
-                console.warn('Lead webhook failed:', error);
-            });
+            try {
+                fetch(googleScriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(leadPayload),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    keepalive: true
+                }).catch(error => {
+                    console.warn('Lead submission failed:', error);
+                });
+            } catch (error) {
+                console.warn('Lead submission failed:', error);
+            }
         }
+
     </script>
 </body>
 </html>
